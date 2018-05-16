@@ -24,6 +24,20 @@ sub register {
         }
     );
 
+    $app->routes->get( '/github/gist-assets/:id' )->to( cb => sub {
+        my $c = shift;
+
+        $c->render_later;
+
+        my $url = sprintf q~https://assets-cdn.github.com/assets/gist-embed-%s.css~, $c->param('id');
+        $c->ua->get( $url => sub {
+            my ($ua, $tx) = @_;
+
+            my $body = $tx->res->body;
+            return $c->render( data => $body, format => 'css' );
+        });
+    })->name( 'github-proxy-gist-asset' );
+
     $app->routes->get( '/github/gist/:user/:id/*file', $config )->to( cb => sub {
         my $c = shift;
 
@@ -42,21 +56,6 @@ sub register {
             return $c->render( data => $body, format => 'js' );
         });
     })->name( 'github-proxy-gist' );
-
-    $app->routes->get( '/github/gist/assets/:id' )->to( cb => sub {
-        my $c = shift;
-
-        $c->render_later;
-
-        my $url = sprintf q~https://assets-cdn.github.com/assets/gist-embed-%s.css~, $c->param('id');
-        $c->ua->get( $url => sub {
-            my ($ua, $tx) = @_;
-
-            my $body = $tx->res->body;
-            return $c->render( data => $body, format => 'css' );
-        });
-    })->name( 'github-proxy-gist-asset' );
-
 }
 
 1;
