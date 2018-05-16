@@ -4,7 +4,7 @@ package Mojolicious::Plugin::GistGithubProxy;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 our $GIST_URL_FORMAT = 'https://gist.github.com/%s/%s.js?file=%s';
 
